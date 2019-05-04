@@ -1,5 +1,5 @@
-resource "aws_codebuild_project" "zeus" {
-  name = "zeus"
+resource "aws_codebuild_project" "prometheus" {
+  name = "prometheus"
   build_timeout = "5"
   service_role = "${aws_iam_role.leeroy.arn}"
 
@@ -9,7 +9,7 @@ resource "aws_codebuild_project" "zeus" {
 
   cache {
     type = "S3"
-    location = "${aws_s3_bucket.leeroy.bucket}"
+    location = "${aws_s3_bucket.leeroy.bucket}/prometheus"
   }
 
   environment {
@@ -21,7 +21,7 @@ resource "aws_codebuild_project" "zeus" {
 
   source {
     type = "GITHUB"
-    location = "https://github.com/patrickhousley/zeus.git"
+    location = "https://github.com/patrickhousley/prometheus.git"
     git_clone_depth = 1
   }
 
@@ -35,9 +35,5 @@ resource "aws_codebuild_project" "zeus" {
     security_group_ids = [
       "${aws_default_vpc.default.default_security_group_id}"
     ]
-  }
-
-  tags = {
-    "Environment" = "Test"
   }
 }
