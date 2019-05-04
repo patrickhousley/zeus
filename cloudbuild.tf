@@ -26,14 +26,8 @@ resource "aws_codebuild_project" "prometheus" {
   }
 
   vpc_config {
-    vpc_id = "${aws_default_vpc.default.id}"
-
-    subnets = [
-      "${aws_default_subnet.default_az1.id}"
-    ]
-
-    security_group_ids = [
-      "${aws_default_vpc.default.default_security_group_id}"
-    ]
+    vpc_id = "${module.build_vpc.vpc_id}"
+    subnets = ["${module.build_vpc.private_subnets}"]
+    security_group_ids = ["${module.build_vpc.default_security_group_id}"]
   }
 }
