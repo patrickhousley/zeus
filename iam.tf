@@ -32,18 +32,45 @@ data "aws_iam_policy_document" "leeroy" {
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents",
-      "ec2:DescribeSecurityGroups",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeDhcpOptions",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface",
       "ec2:DescribeSubnets",
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:GetObjectVersion",
-      "s3:GetBucketAcl",
-      "s3:GetBucketLocation"
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeVpcs"
     ]
     resources = [
       "*"
     ]
+  }
+  statement {
+    actions = [
+      "s3:*"
+    ]
+    resources = [
+      "${aws_s3_bucket.leeroy.arn}",
+      "${aws_s3_bucket.leeroy.arn}/*",
+    ]
+  }
+  statement {
+    actions = [
+      "ec2:CreateNetworkInterfacePermission"
+    ]
+    resources = [
+      "arn:aws:ec2:us-east-1:417919778916:network-interface/*"
+    ]
+    condition {
+      test = "StringEquals"
+      variable = "ec2:AuthorizedService"
+      values = ["codebuild.amazonaws.com"]
+    }
   }
 }
 
