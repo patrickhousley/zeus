@@ -22,7 +22,7 @@ resource "aws_codepipeline" "prometheus" {
         Owner = "patrickhousley"
         Repo = "prometheus"
         Branch = "master"
-        OAuthToken = "${var.githubOAuthToken}"
+        OAuthToken = "${var.github_oauth_token}"
       }
     }
   }
@@ -61,5 +61,21 @@ resource "aws_codepipeline" "prometheus" {
         Extract = "true"
       }
     }
+  }
+}
+
+resource "aws_codepipeline_webhook" "prometheus" {
+  name = "prometheus"
+  authentication = "GITHUB_HMAC"
+  target_action = "Source"
+  target_pipeline = "${aws_codepipeline.prometheus.id}"
+
+  authentication_configuration {
+    secret_token = "${var.prometheus_webhook_secret}"
+  }
+
+  filter {
+    json_path    = "$.ref"
+    match_equals = "refs/heads/{Branch}"
   }
 }
