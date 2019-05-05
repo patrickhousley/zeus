@@ -1,10 +1,10 @@
 resource "aws_codebuild_project" "prometheus" {
   name = "prometheus"
   build_timeout = "5"
-  service_role = "${aws_iam_role.leeroy.arn}"
+  service_role = "${aws_iam_role.leeroy_build.arn}"
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    type = "CODEPIPELINE"
   }
 
   cache {
@@ -20,9 +20,7 @@ resource "aws_codebuild_project" "prometheus" {
   }
 
   source {
-    type = "GITHUB"
-    location = "https://github.com/patrickhousley/prometheus.git"
-    git_clone_depth = 1
+    type = "CODEPIPELINE"
   }
 
   vpc_config {
@@ -30,8 +28,4 @@ resource "aws_codebuild_project" "prometheus" {
     subnets = ["${module.build_vpc.private_subnets}"]
     security_group_ids = ["${module.build_vpc.default_security_group_id}"]
   }
-}
-
-resource "aws_codebuild_webhook" "prometheus" {
-  project_name = "${aws_codebuild_project.prometheus.name}"
 }
