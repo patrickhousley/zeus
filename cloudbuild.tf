@@ -31,3 +31,7 @@ resource "aws_codebuild_project" "prometheus" {
     security_group_ids = ["${module.build_vpc.default_security_group_id}"]
   }
 }
+
+resource "aws_codebuild_webhook" "prometheus" {
+  project_name = "${aws_codebuild_project.prometheus.name}"
+}
